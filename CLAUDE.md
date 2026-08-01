@@ -13,7 +13,7 @@ Open `index.html` in a browser to preview. It is served as-is from GitHub Pages 
 
 **`drinks.js` is loaded with `<script src>`, not `fetch`.** That is deliberate: `fetch()` on `file://` is blocked by CORS, and a plain script tag isn't, so the page still works when opened straight off disk. Do not "modernize" this into a JSON file, an ES module, or an `import` — all three reintroduce the file:// restriction and break local preview.
 
-The only external resource is the Google Fonts stylesheet (Playfair Display / Libre Baskerville / DM Sans). Everything else — CSS, the cat SVG in the header, the render logic — is inline.
+The only external resource is the Google Fonts stylesheet (Playfair Display / Libre Baskerville / DM Sans). Everything else — CSS, the two hand-drawn cat SVGs in the header (Finfidel, the tuxedo; Pampa, the tabby), the render logic — is inline. Both cats are built on the same 64×64 grid (ears as triangles off a `cx="32" cy="34" rx="16" ry="14"` head ellipse) so they read as a set; keep that skeleton if you add another.
 
 ## Content language
 
