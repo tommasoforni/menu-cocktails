@@ -88,13 +88,51 @@
   .drink-tag { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 500; flex-shrink: 0; margin-left: 12px; align-self: center; }
 
   .recipe-panel { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; }
-  .drink.open .recipe-panel { max-height: 400px; opacity: 1; }
+  .drink.open .recipe-panel { opacity: 1; }
   .recipe-content { padding: 8px 0 20px 28px; }
   .recipe-line { display: flex; align-items: baseline; padding: 3px 0; font-size: 13px; font-weight: 300; }
   .recipe-qty { font-family: 'Playfair Display', serif; font-weight: 700; min-width: 55px; font-size: 13px; }
   .recipe-item { color: rgba(245, 230, 208, 0.5); }
   .recipe-method { margin-top: 10px; padding: 8px 12px; border-left: 2px solid rgba(207, 96, 36, 0.3); font-size: 12px; font-style: italic; font-family: 'Libre Baskerville', serif; color: rgba(245, 230, 208, 0.45); line-height: 1.6; }
   .method-label { font-style: normal; font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(207, 96, 36, 0.6); display: block; margin-bottom: 4px; }
+
+  /* sin stock */
+  .drink.out .drink-row { opacity: 0.34; }
+  .drink.out .drink-name { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: rgba(245, 230, 208, 0.35); }
+  .drink.out .recipe-content { opacity: 0.55; }
+  .drink-out-tag { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 500; flex-shrink: 0; margin-left: 12px; align-self: center; background: rgba(245, 230, 208, 0.06); color: rgba(245, 230, 208, 0.4); }
+  .missing-note { font-size: 11px; font-style: italic; font-family: 'Libre Baskerville', serif; color: rgba(245, 230, 208, 0.35); margin-top: 6px; }
+
+  .pantry-note {
+    text-align: center; margin: -30px 0 40px; font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; font-weight: 300; color: rgba(207, 96, 36, 0.75);
+  }
+  .pantry-note span { color: rgba(245, 230, 208, 0.4); }
+
+  .pantry { display: none; margin-bottom: 44px; padding: 20px; border: 1px solid rgba(207, 150, 80, 0.15); border-radius: 4px; }
+  body.bar-mode .pantry { display: block; }
+  .pantry-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: rgba(207, 96, 36, 0.7); margin-bottom: 4px; }
+  .pantry-help { font-size: 12px; font-style: italic; font-family: 'Libre Baskerville', serif; color: rgba(245, 230, 208, 0.35); margin-bottom: 16px; }
+  .pantry-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 300; cursor: pointer;
+    padding: 6px 14px; border-radius: 20px; transition: all 0.2s ease;
+    background: rgba(207, 150, 80, 0.1); border: 1px solid rgba(207, 150, 80, 0.25); color: #f5e6d0;
+  }
+  .chip:hover { border-color: rgba(207, 150, 80, 0.5); }
+  .chip.out { background: transparent; border-color: rgba(245, 230, 208, 0.12); color: rgba(245, 230, 208, 0.3); text-decoration: line-through; }
+  .chip-count { font-size: 10px; opacity: 0.5; margin-left: 5px; }
+
+  .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(207, 150, 80, 0.15); }
+  .footer-text { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 13px; color: rgba(245, 230, 208, 0.35); line-height: 1.6; }
+  .footer-ornament { font-size: 12px; letter-spacing: 10px; color: rgba(207, 96, 36, 0.3); margin-top: 16px; }
+  .bar-toggle {
+    margin-top: 18px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 300;
+    color: rgba(245, 230, 208, 0.2); transition: color 0.3s ease; padding: 4px;
+  }
+  .bar-toggle:hover { color: rgba(245, 230, 208, 0.5); }
+  body.bar-mode .bar-toggle { color: rgba(207, 96, 36, 0.8); }
 
   .cat-citrico .category-icon { background: rgba(230, 180, 40, 0.15); }
   .cat-citrico .category-title { color: #e6b428; }
@@ -126,29 +164,21 @@
   .cat-oscuro .drink-tag { background: rgba(100, 70, 50, 0.15); color: #a88060; }
   .cat-oscuro .recipe-qty { color: #a88060; }
 
-  .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(207, 150, 80, 0.15); }
-  .footer-text { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 13px; color: rgba(245, 230, 208, 0.35); line-height: 1.6; }
-  .footer-ornament { font-size: 12px; letter-spacing: 10px; color: rgba(207, 96, 36, 0.3); margin-top: 16px; }
-
   @media (max-width: 500px) {
     .menu-container { padding: 30px 20px; }
     .drink-name { font-size: 17px; }
     .category-title { font-size: 22px; }
-    .drink-tag { display: none; }
+    .drink-tag, .drink-out-tag { display: none; }
     .recipe-content { padding-left: 0; }
   }
 
   @media print {
     body { background: #1a0e0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .drink:hover .drink-row { padding-left: 0; }
+    .pantry, .bar-toggle { display: none !important; }
   }
 
   .category { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
-  .category:nth-child(1) { animation-delay: 0.1s; }
-  .category:nth-child(2) { animation-delay: 0.25s; }
-  .category:nth-child(3) { animation-delay: 0.4s; }
-  .category:nth-child(4) { animation-delay: 0.55s; }
-  .category:nth-child(5) { animation-delay: 0.7s; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
   .header { opacity: 0; animation: fadeUp 0.8s ease forwards; }
 </style>
@@ -162,311 +192,171 @@
     <div class="subtitle">Servite lo que quieras · <svg class="cat-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 28L12 12L24 22" fill="#f5e6d0" stroke="#1a0e0a" stroke-width="2"/><path d="M46 28L52 12L40 22" fill="#1a0e0a" stroke="#1a0e0a" stroke-width="2"/><path d="M16 24L14 16L22 22" fill="#1a0e0a" stroke="none"/><path d="M48 24L50 16L42 22" fill="#f5e6d0" stroke="none"/><ellipse cx="32" cy="34" rx="16" ry="14" fill="#f5e6d0" stroke="#1a0e0a" stroke-width="2"/><path d="M32 20C40 20 46 26 46 34C46 38 44 42 40 44L32 44L32 20Z" fill="#1a0e0a"/><ellipse cx="25" cy="32" rx="2.5" ry="3" fill="#1a0e0a"/><ellipse cx="39" cy="32" rx="2.5" ry="3" fill="#f5e6d0"/><circle cx="24" cy="31" r="0.8" fill="#f5e6d0"/><circle cx="38" cy="31" r="0.8" fill="#1a0e0a"/><path d="M30 36L32 38L34 36" fill="#cf6024" stroke="#cf6024" stroke-width="1"/><line x1="16" y1="33" x2="24" y2="34" stroke="#1a0e0a" stroke-width="0.8"/><line x1="16" y1="37" x2="24" y2="36" stroke="#1a0e0a" stroke-width="0.8"/><line x1="48" y1="33" x2="40" y2="34" stroke="#f5e6d0" stroke-width="0.8"/><line x1="48" y1="37" x2="40" y2="36" stroke="#f5e6d0" stroke-width="0.8"/></g></svg> Finfidel invita</div>
   </div>
 
-  <!-- CÍTRICOS & CLÁSICOS -->
-  <div class="category cat-citrico">
-    <div class="category-header">
-      <div class="category-icon">🍋</div>
-      <div class="category-title-block">
-        <div class="category-title">Cítricos & Clásicos</div>
-        <div class="category-desc">Frescos, ácidos, directo al punto</div>
-      </div>
-      <div class="category-line"></div>
-    </div>
+  <div class="pantry-note" id="pantry-note" hidden></div>
 
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">01</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Margarita</div>
-          <div class="drink-ingredients">Tequila · triple sec · lima</div>
-        </div>
-        <span class="drink-tag">★ clásico</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Tequila blanco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Triple sec</span></div>
-        <div class="recipe-line"><span class="recipe-qty">¾ oz</span><span class="recipe-item">Jugo de lima fresco</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Shaken · Copa con borde de sal</span>
-          Agitar todo con hielo en la coctelera. Colar en copa escarchada con sal. Decorar con rodaja de lima.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">02</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Tequila Sunrise</div>
-          <div class="drink-ingredients">Tequila · jugo de naranja · granadina</div>
-        </div>
-        <span class="drink-tag">suave</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Tequila blanco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">4 oz</span><span class="recipe-item">Jugo de naranja</span></div>
-        <div class="recipe-line"><span class="recipe-qty">½ oz</span><span class="recipe-item">Granadina</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Layered · Vaso highball</span>
-          Servir tequila y jugo de naranja sobre hielo, revolver. Verter la granadina lentamente por el borde — se hunde sola creando el efecto "amanecer". No revolver.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">03</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Dark Daiquiri</div>
-          <div class="drink-ingredients">Ron oscuro · lima · azúcar</div>
-        </div>
-        <span class="drink-tag">potente</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Ron oscuro</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Jugo de lima fresco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">¾ oz</span><span class="recipe-item">Almíbar simple</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Shaken · Copa cocktail</span>
-          Agitar todo con hielo en la coctelera. Colar en copa fría. Decorar con rodaja de lima.
-        </div>
-      </div></div>
-    </div>
+  <div class="pantry" id="pantry">
+    <div class="pantry-title">Barra</div>
+    <div class="pantry-help">Tocá lo que se acabó. Los tragos que lo llevan se tachan solos.</div>
+    <div class="pantry-chips" id="pantry-chips"></div>
   </div>
 
-  <!-- BURBUJAS & SPRITZ -->
-  <div class="category cat-burbujas">
-    <div class="category-header">
-      <div class="category-icon">✨</div>
-      <div class="category-title-block">
-        <div class="category-title">Burbujas & Spritz</div>
-        <div class="category-desc">Con prosecco, livianos y para brindar</div>
-      </div>
-      <div class="category-line"></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">04</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Aperol Spritz</div>
-          <div class="drink-ingredients">Aperol · prosecco · soda</div>
-        </div>
-        <span class="drink-tag">★ favorito</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">3 oz</span><span class="recipe-item">Prosecco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Aperol</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Soda</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Copa de vino grande</span>
-          Llenar la copa con hielo. Agregar prosecco, Aperol, y soda. Revolver suavemente. Decorar con rodaja de naranja.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">05</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Campari Spritz</div>
-          <div class="drink-ingredients">Campari · prosecco · soda</div>
-        </div>
-        <span class="drink-tag">amargo</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">3 oz</span><span class="recipe-item">Prosecco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Campari</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Soda</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Copa de vino grande</span>
-          Igual que el Aperol Spritz pero con Campari. Más amargo e intenso. Decorar con rodaja de naranja.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">06</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Double Trouble Spritz</div>
-          <div class="drink-ingredients">Aperol · Campari · prosecco</div>
-        </div>
-        <span class="drink-tag">de la casa</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">3 oz</span><span class="recipe-item">Prosecco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Aperol</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Campari</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Soda</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Copa de vino grande</span>
-          Llenar con hielo. Prosecco, Aperol, Campari, soda. Revolver suavemente. Decorar con rodaja de naranja.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">07</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Campari Royale</div>
-          <div class="drink-ingredients">Campari · prosecco · jugo de naranja</div>
-        </div>
-        <span class="drink-tag">elegante</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">3 oz</span><span class="recipe-item">Prosecco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1½ oz</span><span class="recipe-item">Campari</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1½ oz</span><span class="recipe-item">Jugo de naranja</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Copa de vino</span>
-          Llenar la copa con hielo. Campari y jugo de naranja, revolver. Completar con prosecco. Decorar con rodaja de naranja.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">08</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Fernet Spritz</div>
-          <div class="drink-ingredients">Fernet Branca · prosecco</div>
-        </div>
-        <span class="drink-tag">atrevido</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">3 oz</span><span class="recipe-item">Prosecco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Fernet Branca</span></div>
-        <div class="recipe-line"><span class="recipe-qty">1 oz</span><span class="recipe-item">Soda</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Copa de vino</span>
-          Llenar con hielo. Fernet, prosecco, soda. Revolver suavemente. Decorar con rodaja de limón.
-        </div>
-      </div></div>
-    </div>
-  </div>
-
-  <!-- AMARGOS & INTENSOS -->
-  <div class="category cat-amargo">
-    <div class="category-header">
-      <div class="category-icon">🔥</div>
-      <div class="category-title-block">
-        <div class="category-title">Amargos & Intensos</div>
-        <div class="category-desc">Para los que le meten sin miedo</div>
-      </div>
-      <div class="category-line"></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">09</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Fernet y Cola</div>
-          <div class="drink-ingredients">Fernet Branca · coca cola</div>
-        </div>
-        <span class="drink-tag">★ argentino</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Fernet Branca</span></div>
-        <div class="recipe-line"><span class="recipe-qty">4–6 oz</span><span class="recipe-item">Coca Cola</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Vaso alto</span>
-          Llenar un vaso alto con hielo. Verter el Fernet. Agregar la Coca Cola inclinando el vaso para generar la espuma dorada. Revolver suave. Proporción clásica argentina: 30% Fernet, 70% Coca.
-        </div>
-      </div></div>
-    </div>
-  </div>
-
-  <!-- ESPECIADOS & MULES -->
-  <div class="category cat-especiado">
-    <div class="category-header">
-      <div class="category-icon">🫚</div>
-      <div class="category-title-block">
-        <div class="category-title">Especiados & Mules</div>
-        <div class="category-desc">Con jengibre, picantes y refrescantes</div>
-      </div>
-      <div class="category-line"></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">10</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Mexican Mule</div>
-          <div class="drink-ingredients">Tequila · ginger beer · lima</div>
-        </div>
-        <span class="drink-tag">picante</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Tequila blanco</span></div>
-        <div class="recipe-line"><span class="recipe-qty">4 oz</span><span class="recipe-item">Ginger beer</span></div>
-        <div class="recipe-line"><span class="recipe-qty">½ oz</span><span class="recipe-item">Jugo de lima fresco</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Taza de cobre o vaso alto</span>
-          Llenar con hielo. Tequila y jugo de lima. Completar con ginger beer fría. Revolver suave. Decorar con rodaja de lima.
-        </div>
-      </div></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">11</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Dark 'n' Stormy</div>
-          <div class="drink-ingredients">Ron oscuro · ginger beer · lima</div>
-        </div>
-        <span class="drink-tag">★ clásico</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">1½ oz</span><span class="recipe-item">Ron oscuro</span></div>
-        <div class="recipe-line"><span class="recipe-qty">4 oz</span><span class="recipe-item">Ginger beer</span></div>
-        <div class="recipe-line"><span class="recipe-qty">¼ oz</span><span class="recipe-item">Jugo de lima fresco</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Layered · Vaso highball</span>
-          Llenar el vaso con hielo. Verter ginger beer y lima. Flotar el ron oscuro lentamente por encima con la cuchara invertida — no revolver. Decorar con rodaja de lima.
-        </div>
-      </div></div>
-    </div>
-  </div>
-
-  <!-- OSCUROS & RONEROS -->
-  <div class="category cat-oscuro">
-    <div class="category-header">
-      <div class="category-icon">🥃</div>
-      <div class="category-title-block">
-        <div class="category-title">Oscuros & Roneros</div>
-        <div class="category-desc">Con ron, cola, y la noche por delante</div>
-      </div>
-      <div class="category-line"></div>
-    </div>
-
-    <div class="drink" onclick="this.classList.toggle('open')">
-      <div class="drink-row">
-        <span class="drink-number">12</span>
-        <div class="drink-info">
-          <div class="drink-name"><span class="arrow">▶</span> Cuba Libre</div>
-          <div class="drink-ingredients">Ron oscuro · coca cola · lima</div>
-        </div>
-        <span class="drink-tag">★ clásico</span>
-      </div>
-      <div class="recipe-panel"><div class="recipe-content">
-        <div class="recipe-line"><span class="recipe-qty">2 oz</span><span class="recipe-item">Ron oscuro</span></div>
-        <div class="recipe-line"><span class="recipe-qty">4 oz</span><span class="recipe-item">Coca Cola</span></div>
-        <div class="recipe-line"><span class="recipe-qty">½ oz</span><span class="recipe-item">Jugo de lima fresco</span></div>
-        <div class="recipe-method">
-          <span class="method-label">Built · Vaso highball</span>
-          Exprimir la lima en el vaso. Agregar hielo y ron. Completar con Coca Cola fría. Revolver suavemente. Decorar con cuña de lima.
-        </div>
-      </div></div>
-    </div>
-  </div>
+  <div id="menu"></div>
 
   <div class="footer">
     <div class="footer-text">Tomar sin responsabilidad.</div>
     <div class="footer-ornament">✦ ✦ ✦</div>
+    <button class="bar-toggle" id="bar-toggle" type="button">modo barra</button>
   </div>
 
 </div>
+
+<script src="drinks.js"></script>
+<script>
+(function () {
+  const STORE_KEY = 'carta-sin';
+
+  /* ---- estado: qué ingredientes se acabaron ---------------------------- */
+
+  function loadOut() {
+    const fromUrl = new URLSearchParams(location.search).get('sin');
+    const raw = fromUrl !== null
+      ? fromUrl.split(',')
+      : JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+    // Sólo claves conocidas: nada de lo que venga en la URL llega al DOM.
+    return new Set(raw.filter(k => k in INGREDIENTS));
+  }
+
+  let out = loadOut();
+
+  function saveOut() {
+    const list = [...out];
+    localStorage.setItem(STORE_KEY, JSON.stringify(list));
+    const url = new URL(location.href);
+    if (list.length) url.searchParams.set('sin', list.join(','));
+    else url.searchParams.delete('sin');
+    history.replaceState(null, '', url);
+  }
+
+  const missingIn = drink => drink.recipe.map(([, key]) => key).filter(key => out.has(key));
+  const label = (key, form) => (INGREDIENTS[key] || { short: key, full: key })[form];
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* ---- render ---------------------------------------------------------- */
+
+  const menu = document.getElementById('menu');
+
+  function drinkNode(drink, number) {
+    const missing = missingIn(drink);
+    const summary = (drink.summary || drink.recipe.map(([, key]) => key)).map(k => label(k, 'short'));
+
+    const el = document.createElement('div');
+    el.className = missing.length ? 'drink out' : 'drink';
+    el.innerHTML = `
+      <div class="drink-row">
+        <span class="drink-number">${String(number).padStart(2, '0')}</span>
+        <div class="drink-info">
+          <div class="drink-name"><span class="arrow">▶</span> ${esc(drink.name)}</div>
+          <div class="drink-ingredients">${esc(cap(summary.join(' · ')))}</div>
+        </div>
+        ${missing.length
+          ? '<span class="drink-out-tag">sin stock</span>'
+          : drink.tag ? `<span class="drink-tag">${esc(drink.tag)}</span>` : ''}
+      </div>
+      <div class="recipe-panel"><div class="recipe-content">
+        ${drink.recipe.map(([qty, key]) => `
+          <div class="recipe-line">
+            <span class="recipe-qty">${esc(qty)}</span>
+            <span class="recipe-item">${esc(label(key, 'full'))}</span>
+          </div>`).join('')}
+        <div class="recipe-method">
+          <span class="method-label">${esc(drink.method)}</span>
+          ${esc(drink.steps)}
+        </div>
+        ${missing.length
+          ? `<div class="missing-note">Falta ${esc(missing.map(k => label(k, 'full').toLowerCase()).join(' y '))}.</div>`
+          : ''}
+      </div></div>`;
+
+    // La receta se abre a su altura real — nada de tope fijo que recorte.
+    const panel = el.querySelector('.recipe-panel');
+    el.addEventListener('click', () => {
+      const open = el.classList.toggle('open');
+      panel.style.maxHeight = open ? panel.scrollHeight + 'px' : '';
+    });
+
+    return el;
+  }
+
+  function render() {
+    // El número sale del orden en drinks.js, así no baila cuando algo se acaba.
+    const numbered = DRINKS.map((drink, i) => ({ drink, number: i + 1 }));
+    menu.textContent = '';
+
+    CATEGORIES.forEach((cat, i) => {
+      const mine = numbered.filter(({ drink }) => drink.cat === cat.key);
+      if (!mine.length) return;
+
+      // Lo que se puede servir, primero.
+      mine.sort((a, b) => missingIn(a.drink).length - missingIn(b.drink).length);
+
+      const section = document.createElement('div');
+      section.className = `category cat-${cat.key}`;
+      section.style.animationDelay = `${0.1 + i * 0.15}s`;
+      section.innerHTML = `
+        <div class="category-header">
+          <div class="category-icon">${esc(cat.icon)}</div>
+          <div class="category-title-block">
+            <div class="category-title">${esc(cat.title)}</div>
+            <div class="category-desc">${esc(cat.desc)}</div>
+          </div>
+          <div class="category-line"></div>
+        </div>`;
+
+      mine.forEach(({ drink, number }) => section.appendChild(drinkNode(drink, number)));
+      menu.appendChild(section);
+    });
+
+    renderNote();
+    renderChips();
+  }
+
+  function renderNote() {
+    const note = document.getElementById('pantry-note');
+    const gone = [...out];
+    note.hidden = gone.length === 0;
+    if (gone.length) {
+      const n = DRINKS.filter(d => missingIn(d).length).length;
+      note.innerHTML = `Hoy no hay ${esc(gone.map(k => label(k, 'full').toLowerCase()).join(' · '))}
+        <span>— ${n} ${n === 1 ? 'trago afuera' : 'tragos afuera'}</span>`;
+    }
+  }
+
+  function renderChips() {
+    const box = document.getElementById('pantry-chips');
+    box.textContent = '';
+
+    Object.keys(INGREDIENTS).forEach(key => {
+      const uses = DRINKS.filter(d => d.recipe.some(([, k]) => k === key)).length;
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = out.has(key) ? 'chip out' : 'chip';
+      chip.innerHTML = `${esc(label(key, 'full'))}<span class="chip-count">${uses}</span>`;
+      chip.addEventListener('click', () => {
+        out.has(key) ? out.delete(key) : out.add(key);
+        saveOut();
+        render();
+      });
+      box.appendChild(chip);
+    });
+  }
+
+  document.getElementById('bar-toggle').addEventListener('click', () => {
+    document.body.classList.toggle('bar-mode');
+  });
+
+  render();
+})();
+</script>
 </body>
 </html>
