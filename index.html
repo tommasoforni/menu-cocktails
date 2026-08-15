@@ -652,10 +652,7 @@ const QR = (function () {
 
   function openShare() {
     const url = shareUrl();
-    const gone = [...out];
-    document.getElementById('share-hint').textContent = gone.length
-      ? `Escaneá y te llevás la carta con la barra de hoy — sin ${gone.map(k => label(k, 'full').toLowerCase()).join(' · ')}.`
-      : 'Escaneá y te llevás la carta entera.';
+    document.getElementById('share-hint').textContent = "Escaneá boludo";
     document.getElementById('share-url').textContent = url;
 
     const box = document.getElementById('share-qr');
