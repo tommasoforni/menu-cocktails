@@ -126,13 +126,41 @@
   .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(207, 150, 80, 0.15); }
   .footer-text { font-family: 'Libre Baskerville', serif; font-style: italic; font-size: 13px; color: rgba(245, 230, 208, 0.35); line-height: 1.6; }
   .footer-ornament { font-size: 12px; letter-spacing: 10px; color: rgba(207, 96, 36, 0.3); margin-top: 16px; }
-  .bar-toggle {
-    margin-top: 18px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  .footer-actions { margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .footer-btn {
+    background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
     font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 300;
     color: rgba(245, 230, 208, 0.2); transition: color 0.3s ease; padding: 4px;
   }
-  .bar-toggle:hover { color: rgba(245, 230, 208, 0.5); }
-  body.bar-mode .bar-toggle { color: rgba(207, 96, 36, 0.8); }
+  .footer-btn:hover { color: rgba(245, 230, 208, 0.5); }
+  .footer-sep { font-size: 9px; color: rgba(245, 230, 208, 0.15); }
+  body.bar-mode #bar-toggle { color: rgba(207, 96, 36, 0.8); }
+
+  /* compartir */
+  .share-overlay {
+    position: fixed; inset: 0; z-index: 10; padding: 24px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(12, 6, 4, 0.9); backdrop-filter: blur(3px);
+  }
+  .share-overlay[hidden] { display: none; }
+  .share-card {
+    width: 100%; max-width: 320px; text-align: center; padding: 26px 24px; border-radius: 6px;
+    background: #201209; border: 1px solid rgba(207, 150, 80, 0.25);
+  }
+  .share-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #f5e6d0; }
+  .share-hint { font-size: 12px; font-style: italic; font-family: 'Libre Baskerville', serif; color: rgba(245, 230, 208, 0.4); margin-top: 6px; line-height: 1.5; }
+  /* el QR va sobre fondo claro sí o sí — los lectores no leen claro sobre oscuro */
+  .share-qr { width: 210px; max-width: 100%; margin: 18px auto 0; padding: 10px; background: #f5e6d0; border-radius: 4px; }
+  .share-qr svg { display: block; width: 100%; height: auto; }
+  .share-url { font-size: 10px; line-height: 1.5; word-break: break-all; color: rgba(245, 230, 208, 0.35); margin-top: 14px; }
+  .share-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+  .share-btn {
+    font-family: 'DM Sans', sans-serif; font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    font-weight: 300; cursor: pointer; padding: 8px 14px; border-radius: 20px; transition: border-color 0.2s ease;
+    background: rgba(207, 150, 80, 0.1); border: 1px solid rgba(207, 150, 80, 0.25); color: #f5e6d0;
+  }
+  .share-btn:hover { border-color: rgba(207, 150, 80, 0.5); }
+  .share-btn[hidden] { display: none; }
 
   .cat-citrico .category-icon { background: rgba(230, 180, 40, 0.15); }
   .cat-citrico .category-title { color: #e6b428; }
@@ -175,7 +203,7 @@
   @media print {
     body { background: #1a0e0a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .drink:hover .drink-row { padding-left: 0; }
-    .pantry, .bar-toggle { display: none !important; }
+    .pantry, .footer-actions, .share-overlay { display: none !important; }
   }
 
   .category { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
@@ -205,12 +233,267 @@
   <div class="footer">
     <div class="footer-text">Tomar sin responsabilidad.</div>
     <div class="footer-ornament">✦ ✦ ✦</div>
-    <button class="bar-toggle" id="bar-toggle" type="button">modo barra</button>
+    <div class="footer-actions">
+      <button class="footer-btn" id="bar-toggle" type="button">modo barra</button>
+      <span class="footer-sep">·</span>
+      <button class="footer-btn" id="share-toggle" type="button">compartir</button>
+    </div>
   </div>
 
 </div>
 
+<div class="share-overlay" id="share" hidden>
+  <div class="share-card" role="dialog" aria-modal="true" aria-label="Compartir la carta">
+    <div class="share-title">Llevate la carta</div>
+    <div class="share-hint" id="share-hint"></div>
+    <div class="share-qr" id="share-qr"></div>
+    <div class="share-url" id="share-url"></div>
+    <div class="share-actions">
+      <button class="share-btn" id="share-native" type="button" hidden>enviar</button>
+      <button class="share-btn" id="share-copy" type="button">copiar link</button>
+      <button class="share-btn" id="share-close" type="button">cerrar</button>
+    </div>
+  </div>
+</div>
+
 <script src="drinks.js"></script>
+<script>
+/* Generador de QR mínimo: modo byte, corrección nivel M, versiones 1 a 10.
+   Escrito a mano porque la página no carga librerías: todo tiene que andar
+   abriendo el archivo desde el disco. Devuelve un <svg> listo para insertar. */
+const QR = (function () {
+  // Por versión: [codewords de corrección por bloque, [[bloques, codewords de datos], …]]
+  const EC_M = [null,
+    [10, [[1, 16]]],            [16, [[1, 28]]],            [26, [[1, 44]]],
+    [18, [[2, 32]]],            [24, [[2, 43]]],            [16, [[4, 27]]],
+    [18, [[4, 31]]],            [22, [[2, 38], [2, 39]]],   [22, [[3, 36], [2, 37]]],
+    [26, [[4, 43], [1, 44]]],
+  ];
+  // Centros de los patrones de alineación, por versión.
+  const ALIGN = [null, [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34],
+                 [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50]];
+
+  /* ---- aritmética en GF(256) para Reed-Solomon ------------------------- */
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  for (let i = 0, x = 1; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11d; }
+  for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  const mul = (a, b) => (a && b) ? EXP[LOG[a] + LOG[b]] : 0;
+
+  function genPoly(n) {
+    let poly = [1];
+    for (let i = 0; i < n; i++) {
+      const next = new Array(poly.length + 1).fill(0);
+      for (let j = 0; j < poly.length; j++) {
+        next[j] ^= poly[j];
+        next[j + 1] ^= mul(poly[j], EXP[i]);
+      }
+      poly = next;
+    }
+    return poly;
+  }
+
+  function ecc(data, n) {
+    const gen = genPoly(n);
+    const res = new Uint8Array(data.length + n);
+    res.set(data);
+    for (let i = 0; i < data.length; i++) {
+      const factor = res[i];
+      if (!factor) continue;
+      for (let j = 0; j < gen.length; j++) res[i + j] ^= mul(gen[j], factor);
+    }
+    return res.slice(data.length);
+  }
+
+  /* ---- datos: bits, relleno, bloques e intercalado --------------------- */
+  function encode(text) {
+    const bytes = new TextEncoder().encode(text);
+    let version = 1, spec, dataCw, countBits;
+    for (; version <= 10; version++) {
+      spec = EC_M[version];
+      dataCw = spec[1].reduce((n, [blocks, len]) => n + blocks * len, 0);
+      countBits = version < 10 ? 8 : 16;
+      if (4 + countBits + bytes.length * 8 <= dataCw * 8) break;
+    }
+    if (version > 10) throw new Error('el link no entra en el QR');
+
+    const bits = [];
+    const push = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+    push(0b0100, 4);
+    push(bytes.length, countBits);
+    bytes.forEach(b => push(b, 8));
+    for (let i = 0; i < 4 && bits.length < dataCw * 8; i++) bits.push(0);
+    while (bits.length % 8) bits.push(0);
+
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      let b = 0;
+      for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j];
+      data.push(b);
+    }
+    for (let i = 0; data.length < dataCw; i++) data.push(i % 2 ? 0x11 : 0xec);
+
+    const blocks = [], checks = [];
+    let at = 0;
+    spec[1].forEach(([count, len]) => {
+      for (let i = 0; i < count; i++) {
+        const block = data.slice(at, at + len);
+        at += len;
+        blocks.push(block);
+        checks.push(ecc(block, spec[0]));
+      }
+    });
+
+    const codewords = [];
+    const longest = Math.max(...blocks.map(b => b.length));
+    for (let i = 0; i < longest; i++) blocks.forEach(b => { if (i < b.length) codewords.push(b[i]); });
+    for (let i = 0; i < spec[0]; i++) checks.forEach(c => codewords.push(c[i]));
+
+    return { version, codewords };
+  }
+
+  /* ---- matriz: patrones fijos, datos, máscara -------------------------- */
+  const MASKS = [
+    (r, c) => (r + c) % 2 === 0,
+    (r, c) => r % 2 === 0,
+    (r, c) => c % 3 === 0,
+    (r, c) => (r + c) % 3 === 0,
+    (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0,
+    (r, c) => (r * c) % 2 + (r * c) % 3 === 0,
+    (r, c) => ((r * c) % 2 + (r * c) % 3) % 2 === 0,
+    (r, c) => ((r + c) % 2 + (r * c) % 3) % 2 === 0,
+  ];
+
+  function build(version, codewords) {
+    const size = 17 + version * 4;
+    const grid = Array.from({ length: size }, () => new Array(size).fill(null)); // null = todavía libre
+
+    const finder = (r0, c0) => {
+      for (let r = -1; r <= 7; r++) for (let c = -1; c <= 7; c++) {
+        const rr = r0 + r, cc = c0 + c;
+        if (rr < 0 || rr >= size || cc < 0 || cc >= size) continue;
+        const ring = r >= 0 && r <= 6 && c >= 0 && c <= 6 &&
+          (r === 0 || r === 6 || c === 0 || c === 6 || (r >= 2 && r <= 4 && c >= 2 && c <= 4));
+        grid[rr][cc] = ring;
+      }
+    };
+    finder(0, 0); finder(0, size - 7); finder(size - 7, 0);
+
+    for (let i = 8; i < size - 8; i++) { grid[6][i] = i % 2 === 0; grid[i][6] = i % 2 === 0; }
+
+    const centers = ALIGN[version], last = centers[centers.length - 1];
+    centers.forEach(r => centers.forEach(c => {
+      // Las tres combinaciones que caen sobre un finder no llevan alineación.
+      if ((r === 6 && c === 6) || (r === 6 && c === last) || (r === last && c === 6)) return;
+      for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++)
+        grid[r + dr][c + dc] = Math.max(Math.abs(dr), Math.abs(dc)) !== 1;
+    }));
+
+    grid[size - 8][8] = true; // módulo oscuro fijo
+
+    // Reservar las zonas de formato y de versión antes de meter datos.
+    const formatCells = [];
+    for (let i = 0; i <= 14; i++) {
+      // Copia 1: baja por la columna 8 y sigue por la fila 8, salteando el timing.
+      const a = i <= 5 ? [8, i] : i === 6 ? [8, 7] : i === 7 ? [8, 8] : i === 8 ? [7, 8] : [14 - i, 8];
+      // Copia 2: abajo a la izquierda los primeros 7 bits, arriba a la derecha el resto.
+      const b = i <= 6 ? [size - 1 - i, 8] : [8, size - 15 + i];
+      formatCells.push([a, b]);
+    }
+    formatCells.forEach(pair => pair.forEach(([r, c]) => { if (grid[r][c] === null) grid[r][c] = false; }));
+
+    if (version >= 7) {
+      let rem = version;
+      for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >> 11) * 0x1f25);
+      const vbits = (version << 12) | rem;
+      for (let i = 0; i < 18; i++) {
+        const bit = ((vbits >> i) & 1) === 1;
+        const a = size - 11 + i % 3, b = Math.floor(i / 3);
+        grid[a][b] = bit; grid[b][a] = bit;
+      }
+    }
+
+    // Datos en zigzag de derecha a izquierda, salteando la columna 6 (timing).
+    const cells = [];
+    let bit = 0;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let v = 0; v < size; v++) {
+        for (let j = 0; j < 2; j++) {
+          const c = right - j;
+          const r = ((right + 1) & 2) === 0 ? size - 1 - v : v;
+          if (grid[r][c] !== null) continue;
+          const on = bit < codewords.length * 8 &&
+            ((codewords[bit >> 3] >> (7 - (bit & 7))) & 1) === 1;
+          bit++;
+          grid[r][c] = on;
+          cells.push([r, c]);
+        }
+      }
+    }
+
+    return { size, grid, cells, formatCells };
+  }
+
+  function penalty(grid, size) {
+    let score = 0, dark = 0;
+    const lines = [];
+    for (let i = 0; i < size; i++) {
+      let row = '', col = '';
+      for (let j = 0; j < size; j++) { row += grid[i][j] ? '1' : '0'; col += grid[j][i] ? '1' : '0'; }
+      lines.push(row, col);
+    }
+    lines.forEach(line => {
+      (line.match(/0{5,}|1{5,}/g) || []).forEach(run => score += run.length - 2);
+      ['10111010000', '00001011101'].forEach(pat => {
+        for (let at = line.indexOf(pat); at !== -1; at = line.indexOf(pat, at + 1)) score += 40;
+      });
+    });
+    for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) {
+      if (grid[r][c]) dark++;
+      if (r && c && grid[r][c] === grid[r - 1][c] && grid[r][c] === grid[r][c - 1] && grid[r][c] === grid[r - 1][c - 1]) score += 3;
+    }
+    return score + 10 * Math.floor(Math.abs(dark * 100 / (size * size) - 50) / 5);
+  }
+
+  function matrix(text) {
+    const { version, codewords } = encode(text);
+    const { size, grid, cells, formatCells } = build(version, codewords);
+    let best = null;
+
+    for (let mask = 0; mask < 8; mask++) {
+      const test = grid.map(row => row.slice());
+      cells.forEach(([r, c]) => { if (MASKS[mask](r, c)) test[r][c] = !test[r][c]; });
+
+      let rem = mask; // nivel M = 00, así que los bits de formato son la máscara sola
+      for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >> 9) * 0x537);
+      const fbits = ((mask << 10) | rem) ^ 0x5412;
+      formatCells.forEach((pair, i) => {
+        const on = ((fbits >> (14 - i)) & 1) === 1; // la lista arranca por el bit más significativo
+
+        pair.forEach(([r, c]) => { test[r][c] = on; });
+      });
+
+      const score = penalty(test, size);
+      if (!best || score < best.score) best = { score, grid: test };
+    }
+
+    return { size, grid: best.grid };
+  }
+
+  /* ---- salida como SVG ------------------------------------------------- */
+  function svg(text) {
+    const { size, grid } = matrix(text);
+    const quiet = 4, dim = size + quiet * 2;
+    let path = '';
+    for (let r = 0; r < size; r++) for (let c = 0; c < size; c++)
+      if (grid[r][c]) path += `M${c + quiet} ${r + quiet}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${dim} ${dim}" shape-rendering="crispEdges" role="img" aria-label="Código QR de la carta">
+      <rect width="${dim}" height="${dim}" fill="#f5e6d0"/><path d="${path}" fill="#1a0e0a"/></svg>`;
+  }
+
+  return { svg };
+})();
+</script>
 <script>
 (function () {
   const STORE_KEY = 'carta-sin';
@@ -228,13 +511,19 @@
 
   let out = loadOut();
 
-  function saveOut() {
-    const list = [...out];
-    localStorage.setItem(STORE_KEY, JSON.stringify(list));
+  // El link para compartir: siempre lleva el stock de hoy, aunque haya salido
+  // del localStorage y nunca haya estado en la barra de direcciones.
+  function shareUrl() {
     const url = new URL(location.href);
+    const list = [...out];
     if (list.length) url.searchParams.set('sin', list.join(','));
     else url.searchParams.delete('sin');
-    history.replaceState(null, '', url);
+    return url.href;
+  }
+
+  function saveOut() {
+    localStorage.setItem(STORE_KEY, JSON.stringify([...out]));
+    history.replaceState(null, '', shareUrl());
   }
 
   const missingIn = drink => drink.recipe.map(([, key]) => key).filter(key => out.has(key));
@@ -354,6 +643,56 @@
   document.getElementById('bar-toggle').addEventListener('click', () => {
     document.body.classList.toggle('bar-mode');
   });
+
+  /* ---- compartir: el link de hoy, hecho QR ----------------------------- */
+
+  const share = document.getElementById('share');
+  const copyBtn = document.getElementById('share-copy');
+  const nativeBtn = document.getElementById('share-native');
+
+  function openShare() {
+    const url = shareUrl();
+    const gone = [...out];
+    document.getElementById('share-hint').textContent = gone.length
+      ? `Escaneá y te llevás la carta con la barra de hoy — sin ${gone.map(k => label(k, 'full').toLowerCase()).join(' · ')}.`
+      : 'Escaneá y te llevás la carta entera.';
+    document.getElementById('share-url').textContent = url;
+
+    const box = document.getElementById('share-qr');
+    try {
+      box.innerHTML = QR.svg(url);
+    } catch (e) {
+      // Un link imposible de codificar no puede dejar la tarjeta muda.
+      box.innerHTML = '';
+      box.hidden = true;
+    }
+
+    copyBtn.textContent = 'copiar link';
+    share.hidden = false;
+  }
+
+  const closeShare = () => { share.hidden = true; };
+
+  document.getElementById('share-toggle').addEventListener('click', openShare);
+  document.getElementById('share-close').addEventListener('click', closeShare);
+  share.addEventListener('click', e => { if (e.target === share) closeShare(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeShare(); });
+
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl());
+      copyBtn.textContent = '¡copiado!';
+    } catch (e) {
+      copyBtn.textContent = 'copialo a mano ↑';
+    }
+  });
+
+  if (navigator.share) {
+    nativeBtn.hidden = false;
+    nativeBtn.addEventListener('click', () => {
+      navigator.share({ title: 'La Carta de Tragos', url: shareUrl() }).catch(() => {});
+    });
+  }
 
   render();
 })();

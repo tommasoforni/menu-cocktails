@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 An interactive cocktail menu ("La Carta de Tragos") in two files, with no build step, no dependencies, no tests, and no package manager:
 
 - `drinks.js` — the data: `INGREDIENTS`, `CATEGORIES`, `DRINKS`. This is the only file to touch when changing the menu.
-- `index.html` — page chrome, the whole stylesheet, and the ~120-line inline script that renders the menu from that data.
+- `index.html` — page chrome, the whole stylesheet, the inline QR encoder, and the inline script that renders the menu from that data.
 
 Open `index.html` in a browser to preview. It is served as-is from GitHub Pages (`tommasoforni/menu-cocktails`), which is why the file must stay named `index.html` at the repo root.
 
@@ -51,8 +51,14 @@ An entry in `CATEGORIES` (`key`, `icon`, `title`, `desc`) **plus** a five-rule c
 
 A drink is unavailable when *any* recipe ingredient is out. Out-of-stock drinks are struck through, sorted to the bottom of their category, and annotated with what's missing — they stay visible on purpose, so guests see the drink exists rather than silently wondering.
 
+## Sharing / the QR
+
+The "compartir" button in the footer opens a dialog with the current link as a QR code, the link as text, a copy button, and `navigator.share` when the browser has it. The link comes from `shareUrl()`, which rebuilds `?sin=…` from the live state — not from `location.href` — so a stock list that arrived from `localStorage` and never touched the address bar still travels with the QR. `saveOut()` shares that helper.
+
+The encoder is the `QR` block in `index.html`: byte mode, error correction level M, versions 1–10 (213 bytes, far more than any link this page produces), full mask selection, output as an inline `<svg>`. It is hand-written for the same reason `drinks.js` is a script tag — a CDN library or an npm dependency would break opening the file off disk, and there is no build step to bundle one. Don't swap it for a library. If you touch it, verify against a real decoder rather than by eye (`qrencode` to generate references, `zbarimg` to decode); a wrong module often still *looks* like a QR. The QR must stay dark-on-light — that `#f5e6d0` panel behind it is not decoration, scanners will not read light modules on the dark page background.
+
 State is a set of ingredient keys in `localStorage` under `carta-sin`, editable via the "modo barra" toggle in the footer (instant, no redeploy — that's the point of not putting stock in `drinks.js`). It mirrors to a `?sin=key,key` query param so the link can be shared with stock already applied. The param is the source of truth on load when present, and is filtered against `INGREDIENTS` keys before anything reaches the DOM — keep that filter if you touch `loadOut()`.
 
 ## Design constraints
 
-Dark palette anchored on `#1a0e0a` background / `#f5e6d0` text / `#cf6024` accent; per-category colors override the text tones. Recipe panels animate open to their measured `scrollHeight` (set inline on click), so long recipes no longer clip — don't reintroduce a fixed `max-height` on `.recipe-panel.open`. The stylesheet also targets print (`@page { size: A4 }`, `print-color-adjust: exact` so the dark background survives, bar UI hidden) and a 500px mobile breakpoint that drops the tags and the recipe indent — check both when changing layout.
+Dark palette anchored on `#1a0e0a` background / `#f5e6d0` text / `#cf6024` accent; per-category colors override the text tones. Recipe panels animate open to their measured `scrollHeight` (set inline on click), so long recipes no longer clip — don't reintroduce a fixed `max-height` on `.recipe-panel.open`. The stylesheet also targets print (`@page { size: A4 }`, `print-color-adjust: exact` so the dark background survives, bar UI and share dialog hidden) and a 500px mobile breakpoint that drops the tags and the recipe indent — check both when changing layout.

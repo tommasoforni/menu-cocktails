@@ -16,6 +16,7 @@ const INGREDIENTS = {
   lima:        { short: "lima",             full: "Jugo de lima fresco" },
   granadina:   { short: "granadina",        full: "Granadina" },
   almibar:     { short: "azúcar",           full: "Almíbar simple" },
+  menta:       { short: "menta",            full: "Hojas de menta fresca" },
 };
 
 const CATEGORIES = [
@@ -55,6 +56,15 @@ const DRINKS = [
     recipe: [["2 oz", "ron"], ["1 oz", "lima"], ["¾ oz", "almibar"]],
     method: "Shaken · Copa cocktail",
     steps: "Agitar todo con hielo en la coctelera. Colar en copa fría. Decorar con rodaja de lima.",
+  },
+  {
+    name: "Mojito Oscuro",
+    cat: "citrico",
+    tag: "refrescante",
+    summary: ["ron", "menta", "lima"],
+    recipe: [["2 oz", "ron"], ["1 oz", "lima"], ["¾ oz", "almibar"], ["8 hojas", "menta"], ["2 oz", "soda"]],
+    method: "Muddled · Vaso alto",
+    steps: "Machacar suave la menta con el almíbar y el jugo de lima en el fondo del vaso — apretar apenas, para que largue el aroma sin amargar. Llenar con hielo, agregar el ron oscuro y revolver desde abajo. Completar con soda y decorar con un ramito de menta.",
   },
   {
     name: "Aperol Spritz",
